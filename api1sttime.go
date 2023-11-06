@@ -24,8 +24,27 @@ func getAccountsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, items)
 }
 
+func createAccountHandler(c *gin.Context) {
+	acc := Account{}
+
+	err := c.ShouldBindJSON(&acc)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	index := len(accounts)
+	index++
+	cid := index
+	acc.CID = cid
+
+	accounts[cid] = &acc
+
+	c.JSON(http.StatusCreated, "Account Created.")
+}
+
 func main() {
 	r := gin.Default()
 	r.GET("/accounts", getAccountsHandler)
-	r.Run()
+	r.POST("/accounts", createAccountHandler)
+	r.Run(":2023")
 }
